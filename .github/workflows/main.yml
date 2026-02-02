@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
-    - name: Build APK
+    - name: Build APK with Buildozer
       uses: ArtemSBulgakov/buildozer-action@v1
       id: buildozer
       with:
@@ -20,17 +20,15 @@ jobs:
         buildozer_version: stable
     
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: MPerformance-Password-APK
         path: ${{ steps.buildozer.outputs.filename }}
     
     - name: Create Release
-      uses: softprops/action-gh-release@v1
-      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        tag_name: v1.0.0
-        name: M-Performance Pass v1.0.0
         files: ${{ steps.buildozer.outputs.filename }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
